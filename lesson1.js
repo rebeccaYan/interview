@@ -13,10 +13,9 @@
  * @param string format 格式化模型
  * @return string 返回格式化后的日期文字
  */
-function formatDate( src, format ) {
-	return;
+function formatDate(src, format) {
+    return;
 }
-
 
 /**
  * uniqStrArray
@@ -26,8 +25,8 @@ function formatDate( src, format ) {
  * @param array strArr
  * @return array
  */
-function uniqStrArray( strArr ) {
-	return;
+function uniqStrArray(strArr) {
+    return;
 }
 
 /**
@@ -37,8 +36,8 @@ function uniqStrArray( strArr ) {
  * @param object src
  * @param object
  */
-function clone( src ) {
-	return;
+function clone(src) {
+    return;
 }
 
 /**
@@ -52,7 +51,7 @@ function clone( src ) {
  *     }
  * }
  * 可以改写为：
- * var arr = [1,2,3]; 
+ * var arr = [1,2,3];
  * each( arr, function (i, data) {
  *     // i is index of array, i can be named depends on your need like j, k, l...
  *	   // data is arr[i], data can be named depends on your need like d, arrElement, item...
@@ -62,9 +61,9 @@ function clone( src ) {
  * });
  *
  * @param arr 需要遍历的数组
- * @param Function fn 对每一个数组子元素处理函数 
+ * @param Function fn 对每一个数组子元素处理函数
  */
-function each( arr, fn ) {
+function each(arr, fn) {
 
 }
 
@@ -77,7 +76,7 @@ function each( arr, fn ) {
  * @return boolean，
  */
 function isParent(parent, node) {
-	return;
+    return;
 }
 
 /**
@@ -93,7 +92,7 @@ function isParent(parent, node) {
  *
  */
 function getElementsByAttribute() {
-	return;
+    return;
 }
 
 /**
@@ -102,7 +101,7 @@ function getElementsByAttribute() {
  * @param object target，需要增加class的DOM节点
  * @param string className, 需要增加的class样式，可以多个，用空格隔开
  */
-function addClass( target, className ) {
+function addClass(target, className) {
 
 }
 
@@ -112,23 +111,22 @@ function addClass( target, className ) {
  * @param object target, 需要删除样式的DOM节点
  * @param string className, 需要删除的class样式，可以多个，用空格隔开
  */
- function removeClass( target, className ) {
+function removeClass(target, className) {
 
- }
-
+}
 
 /**
  * DOM事件代理器
  * 为某个DOM下的某些节点增加事件代理
  * 如：
  * eventDelegate(node, "li", "click", clickHandle); 为node节点下所有的li节点增加click事件响应，响应函数为clickHandle
- * 
+ *
  * @param object parentNode
  * @param string tagName
  * @param string eventName
  * @param Function handle
  */
-function eventDelegate( parentNode, tagName, eventName, handle ) {
+function eventDelegate(parentNode, tagName, eventName, handle) {
 
 }
 
@@ -138,7 +136,7 @@ function eventDelegate( parentNode, tagName, eventName, handle ) {
  * 改变元素的透明度，将元素逐渐显示出来
  * @param object node 元素
  */
-function fadeIn( node ) {
+function fadeIn(node) {
 
 }
 
@@ -148,6 +146,6 @@ function fadeIn( node ) {
  * 改变元素的透明度，将元素逐渐消失
  * @param object node 元素
  */
-function fadeOut( node ) {
+function fadeOut(node) {
 
 }
