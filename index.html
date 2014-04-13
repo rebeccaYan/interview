@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>lesson1</title>
+		<meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script language="javascript" type="text/javascript" src="lesson1.js"></script>
+	</head>
+	<body>
+		<div class="main">
+			<div class="mainHead">
+				<h2>lesson1<h2>
+			</div>
+
+			<!--演示 formatDate-->
+			<div id="testFormatDate">
+				<div class="tTitle">
+					<h3>$ 演示 formatDate</h3>
+				</div>
+				<div class="tBody">
+					<div>
+						<p>result: (请在console处查看)</p>		
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testFormatDate()">测试</span>
+					</div>
+				</div>
+			</div>
+
+			<!--演示 uniqStrArray-->
+			<div id="testUniqStrArray">
+				<div class="tTitle">
+					<h3>$ 演示 UniqStrArray</h3>
+				</div>
+				<div class="tBody">
+					<div>
+						<p>result: (请在console处查看)</p>		
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testUniqStrArray()">测试</span>
+					</div>
+				</div>
+			</div>
+
+			<!--演示 Clone-->
+			<div id="testClone">
+				<div class="tTitle">
+					<h3>$ 演示 Clone</h3>
+				</div>
+				<div class="tBody">
+					<div>
+						<p>测试1：查看原对象和克隆对象</p>
+						<p>测试2：更改原对象的srcObj.g内容后，查看原对象和克隆对象</p>
+						<p>result: (请在console处查看)</p>		
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testClone(1)">测试1</span>
+						<span class="button" onclick="testClone(2)">测试2</span>
+					</div>
+				</div>
+			</div>
+
+			<!--演示 each-->
+			<div id="testEach">
+				<div class="tTitle">
+					<h3>$ 演示 each</h3>
+				</div>
+				<div class="tBody">
+					<div>
+						<p>result: (请在console处查看)</p>		
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testEach()">测试</span>
+					</div>
+				</div>
+			</div>
+
+			<!--演示 isParent-->
+			<div id="testIsParent">
+				<div class="tTitle">
+					<h3>$ 演示 isParent</h3>
+				</div>
+				<div class="tBody">
+					<div>
+						<p id="grandfather">--grandfather</br>
+							<span id="uncle"> ----uncle</br></span> 
+							<span id="father"> ----father</br>
+								<span id="child"> --------child</br></span>
+							</span>
+						</p>	
+						</br>	
+						<p id="grandfather_brother">--grandfather's brother</br>
+							<span> ----uncle2</br></span> 
+							<span> ----uncle3</br></span>
+						</p>
+						<span>result:</span><p id="isParentResult"><p>			
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testIsParent('grandfather','child')">测试1</span>
+						<span class="button" onclick="testIsParent('grandfather_brother','child')">测试2</span>
+					</div>
+				</div>
+			</div>
+
+			<!--演示 GetElementsByAttribute-->
+			<div id="testAttribute">
+				<div class="tTitle">
+					<h3>$ 演示 GetElementsByAttribute</h3>
+				</div>
+				<div class="tBody">
+					<div>
+						<p>测试1：查找id为testAttribute的节点下，class属性为button的节点</p>
+						<p>测试2：查找id为testAttribute的节点下，class属性为button的节点</p>
+						<p>测试3：查找整个文档中，class属性为button的节点</p>
+						<p>测试4：查找整个文档中，具备class属性的节点</p>
+						<p>result: (请在console处查看)</p>
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testGetElementsByAttribute(1,'testAttribute','class','button')">测试1</span>
+						<span class="button" onclick="testGetElementsByAttribute(2,'testAttribute','class')">测试2</span>
+						<span class="button" onclick="testGetElementsByAttribute(3,'class','button')">测试3</span>
+						<span class="button" onclick="testGetElementsByAttribute(4,'class')">测试3</span>
+					</div>
+				</div>
+			</div>
+
+			<!--演示 addClass 和 removeClass-->
+			<div id="testClass">
+				<div class="tTitle">
+					<h3>$ 演示 addClass 和 removeClass</h3>
+				</div>
+				<div class="tBody">
+					<div class="text"><p id="classChange" class="    p1         ">please add/remove class for me.</p></div>
+					<div class="buttons">
+						<span class="button" onclick="testClass('classChange',1,'p1    p2')">添加样式</span>
+						<span class="button" onclick="testClass('classChange',2,'p1    p2    p2')">删除样式</span>
+					</div>
+				</div>
+			</div>
+
+			<!--演示 eventDelegate-->
+			<div id="testeventDelegate">
+				<div class="tTitle">
+					<h3>$ 演示 eventDelegate</h3>
+				</div>
+				<div class="tBody">
+					<div >
+						<ul id="parent-delegate">
+						  <li id="child-1">child-1</li>
+						  <li id="child-2">child-2</li>
+						  <li id="child-3">child-3</li>
+						  <li id="child-4">child-4</li>
+						  <li id="child-5">child-5</li>
+						  <li id="child-6">child-6</li>
+						</ul>	
+						<p id="delegateResult"></p>			
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testEventDelegate()">打开代理</span>
+					</div>
+				</div>
+			</div>	
+
+			<!--演示 fadeIn 和 fadeOut-->
+			<div id="testFadeInOUt">
+				<div class="tTitle">
+					<h3>$ 演示 fadeIn 和 fadeOut</h3>
+				</div>
+				<div class="tBody">
+					<div id="fadeInOut">
+						<p>show fade in or fade out.</p>				
+					</div>
+					<div class="buttons">
+						<span class="button" onclick="testFadeInOut('fadeInOut',1)">淡入</span>
+						<span class="button" onclick="testFadeInOut('fadeInOut',2)">淡出</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		
+	</body>
+</html>

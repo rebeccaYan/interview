@@ -14,7 +14,28 @@
  * @return string 返回格式化后的日期文字
  */
 function formatDate(src, format) {
-    return;
+	if(src instanceof Date){
+
+		var obj = {
+			"M+": src.getMonth() + 1,	//月
+			"d+": src.getDate(),		//日
+			"H+": src.getHours(),		//时
+			"m+": src.getMinutes(),		//分
+			"s+": src.getSeconds()		//秒
+		};
+
+		if(/(y+)/.test(format)){		//匹配年
+			format = format.replace(RegExp.$1, (src.getFullYear() + "").substr(4 - RegExp.$1.length)); 
+		}
+
+
+		for(var i in obj){
+			if(new RegExp("(" + i + ")").test(format)){
+				format = format.replace(RegExp.$1, RegExp.$1.length == 1? obj[i] : ("00"+obj[i]).substr(("" + obj[i]).length));
+			}
+		}
+	}
+		return format;
 }
 
 /**
@@ -26,8 +47,27 @@ function formatDate(src, format) {
  * @return array
  */
 function uniqStrArray(strArr) {
-    return;
+    var newArr = [];
+	var obj = {};
+    var i,index;
+	var len = strArr.length;	
+	
+    if (len < 2) {
+        return strArr;
+    }
+
+    for (i = 0; i < len; i++) {
+        index = strArr[i];
+
+        if (obj[index] !== 1) {			            
+            obj[index] = 1;
+			newArr.push(index);
+        }
+    }
+
+    return newArr;
 }
+//不足：该函数只针对字符串数组进行了去重，没有判断元素的类型。不同类型的同值元素会被当成相同的值进行处理，如[1,'1'],['null',null]
 
 /**
  * clone
@@ -36,8 +76,82 @@ function uniqStrArray(strArr) {
  * @param object src
  * @param object
  */
-function clone(src) {
-    return;
+//一开始的方法
+function clone_old(src){
+	var dest;
+
+	switch (typeof src) {
+		case 'undefined': 			
+			break;
+		case 'number':			
+			dest = src;
+			break;
+		case 'string':
+			dest = src;	
+			break;
+		case 'boolean':
+			dest = src;
+			break;
+		case 'function':									
+			var that = this;
+			dest = function() {
+				return that.apply(src, arguments);	
+	
+			};
+			for(var i in src) {
+				dest[i] = src[i];	
+			}
+		case 'object':
+			if(src === null) {
+				dest = null;
+			}else if(src instanceof Array) {				//使用this不成功，改为了src
+				dest = [];
+			
+				for(var i=0; i<src.length; i++ ) {
+					dest.push(clone_old(src[i]));
+				}
+			}else {											//使用this不成功，改为了src
+				dest = {};
+				
+				for(var i in src) {
+					dest[i] = clone_old(src[i]);
+				}
+			}
+			break;
+		default:
+			break;		
+	}
+
+	return dest;
+} 
+
+//一个更简单的方法
+function clone(src){
+	var dest;
+	
+	if(typeof(src) == 'object') {
+		var argc = arguments.callee;			//关键在使用arguments.callee
+
+		if(src === null){
+			dest = null;
+		}else if (src instanceof Array) {
+			dest = [];
+			for(var i=0; i<src.length; i++) {
+				dest.push(argc(src[i]));
+			}			
+		}else {
+			dest = {};
+			for(var i in src){
+				dest[i] = argc(src[i]);
+			}
+			
+		}
+
+		return dest;
+	}
+	dest = src;
+
+	return dest;
 }
 
 /**
@@ -63,9 +177,31 @@ function clone(src) {
  * @param arr 需要遍历的数组
  * @param Function fn 对每一个数组子元素处理函数
  */
-function each(arr, fn) {
 
+function each(arr, fn) {
+	for (var i in arr) {
+		fn(i, arr[i]);
+	}
 }
+/*
+以下是根据网上例子进行了稍微更改的例子，但对一些条件的判断仍不太理解，try catch的是什么呢？感觉做的处理是一样的，为什么要重复写呢？
+function each_t(arr,fn) {
+    for (var i in arr) {
+       if (arr.hasOwnProperty(i)) {  
+            if(typeof(arr[i]) == "object") {
+                fn(i, arr[i]);
+            } else {
+                try {
+                    if(!arr[0].nodeName) fn(i, arr[i]);		//这里主要是对什么进行了判断呢？
+                }
+                catch (e) {
+                    fn(i, arr[i]);
+                }              
+            }
+        }
+    }
+}
+*/
 
 /**
  * isParent
@@ -76,7 +212,13 @@ function each(arr, fn) {
  * @return boolean，
  */
 function isParent(parent, node) {
-    return;
+	while(node !== undefined && node !== null && node.tagName.toUpperCase() !== 'BODY'){
+		if(node == parent){
+			return true;		
+		}
+		node = node.parentNode;
+	}
+    return false;
 }
 
 /**
@@ -91,9 +233,44 @@ function isParent(parent, node) {
  * getElementsByAttribute( "data-listen", "on" ); 查找整个文档中，属性data-listen值为on的节点
  *
  */
-function getElementsByAttribute() {
-    return;
+function getElementsByAttribute(attName, attValue) {
+	var len = arguments.length;
+	var results = [];
+
+	if(len < 1)					//无参数传入 则返回null
+		return null;
+
+	if(arguments[0] instanceof Object && (arguments[0].nodeType === 1)){			//第一个参数是node的情况
+		var nodes = arguments[0].getElementsByTagName("*");
+		var attN = arguments[1],
+			attV = arguments[2];
+	}else if(typeof(arguments[0]) == 'string'){					//第一个参数是属性名attName的情况
+		var nodes = document.getElementsByTagName("*");
+		var attN = arguments[0],
+			attV = arguments[1];
+	}else {		
+		return null;
+	}
+
+	if((typeof(attN) == 'string') && (typeof(attV) == 'string')){			//参数attName，参数attValue均存在的情况
+		for(var i=0; i<nodes.length; i++){
+			if(nodes[i].getAttributeNode(attN) && (nodes[i].getAttributeNode(attN).nodeValue == attV)){			
+				results.push(nodes[i]);
+			}
+		}
+		return results;
+	}else if((typeof(attN) == 'string')){				//参数attName存在，attValue不存在的情况
+		for(var i=0; i<nodes.length; i++){
+				if(nodes[i].getAttributeNode(attN) ){
+					results.push(nodes[i]);
+				}
+			}
+		return results;
+	}else {								//其他情况视为错误 返回null
+		return null;
+	}
 }
+
 
 /**
  * addClass
@@ -102,7 +279,24 @@ function getElementsByAttribute() {
  * @param string className, 需要增加的class样式，可以多个，用空格隔开
  */
 function addClass(target, className) {
+	var oldClass = target.className.replace(/(\s+)/gi, ' '),//对于字符串开头和结尾存在空格的情况，由于不太影响结果，这里没有进行过滤
+		blank = (oldClass != '')? ' ':'',
+		newClass = oldClass + blank + className.replace(/(\s+)/gi, ' ');
 
+	var oldarr = newClass.split(" ");
+	var a = {},
+		newarr = [],
+		index;
+
+	for(var i=0; i<oldarr.length; i++){
+		index = oldarr[i];
+		if(oldarr[index] !== 1){
+			oldarr[index] = 1;
+			newarr.push(index);
+		}
+	}
+
+	target.className = newarr.join(" ");
 }
 
 /**
@@ -112,7 +306,32 @@ function addClass(target, className) {
  * @param string className, 需要删除的class样式，可以多个，用空格隔开
  */
 function removeClass(target, className) {
+	var oldClass = target.className.replace(/(\s+)/gi, ' ');	//没有对字符串开头和结尾存在的空格进行过滤
+		className = className.replace(/(\s+)/gi, ' ');
+	var oldarr = oldClass.split(" ");
+	var delarr = className.split(" ");
 
+	var	newarr = [], 
+		a = {},
+		index;
+
+	if(oldClass == '' || className == '' || oldClass == ' ' ||className == ' ') 
+		return 0;
+		
+	for(var i=0; i< delarr.length; i++){
+		index = delarr[i];
+		a[index] = 1;
+	}
+
+	for(var i=0; i<oldarr.length; i++){
+		index = oldarr[i];
+
+		if(a[index] !== 1){
+			newarr.push(index);
+		}
+	}
+	
+	target.className = newarr.join(' ');
 }
 
 /**
@@ -127,7 +346,38 @@ function removeClass(target, className) {
  * @param Function handle
  */
 function eventDelegate(parentNode, tagName, eventName, handle) {
+	if(!parentNode) {
+		return false;
+	}
 
+	if (parentNode.addEventListener){						//Firefox等现代浏览器
+		parentNode.addEventListener(eventName, function(e){
+			e = e || window.event;
+			var target = e.srcElement? e.srcElement : e.target;
+
+			if (target && target.nodeName == tagName.toUpperCase()) {
+				handle.apply(target, arguments);
+			}
+		},false);
+	}else if (parentNode.attachEvent) {						//	IE
+		parentNode.attachEvent('on'+eventName, function(){
+			e = e || window.event;
+			var target = e.srcElement? e.srcElement : e.target;
+			
+			if (target && target.nodeName == tagName) {
+				handle.apply(target, arguments);
+			}
+		});	
+	}else {													//其他情况
+		parent["on" + eventName] = function(){
+			e = e || window.event;
+			var target = e.srcElement? e.srcElement : e.target;
+			
+			if (target && target.nodeName == tagName) {
+				handle.apply(target, arguments);
+			}
+		};
+	}
 }
 
 /**
@@ -137,9 +387,32 @@ function eventDelegate(parentNode, tagName, eventName, handle) {
  * @param object node 元素
  */
 function fadeIn(node) {
+	var finValue = 100;			
+	var chaValue = 0;			
 
+	node.style.display = 'block';
+
+	setOpacity(node, 0);		//初始化透明度
+
+	(function(){
+		setOpacity(node, chaValue);		//设置透明度
+		chaValue += 5;
+
+		if (chaValue <= finValue) {
+			setTimeout(arguments.callee, 20);	
+		}
+	})();
+	
+	
+	function setOpacity(node, value){
+		if(node.filters){
+			node.style.filter = 'alpha(opacity=' + chaValue +')' 	
+		}else {
+			 node.style.opacity = chaValue / 100;
+		}
+	}
 }
-
+	
 /**
  * fadeOut
  * 淡出渐变效果
@@ -147,5 +420,195 @@ function fadeIn(node) {
  * @param object node 元素
  */
 function fadeOut(node) {
+	var finValue = 0;
+	var chaValue = node.opacity? node.opacity : 100;
 
+	(function(){
+		setOpacity(node, chaValue);			//设置透明度
+		chaValue -= 5;
+
+		if (chaValue >= finValue){
+			setTimeout(arguments.callee, 20);
+		}else if(finValue < 0){
+			node.style.display = 'none';
+		}		
+	})();
+
+	function setOpacity(node, value){
+		if(node.filters){
+			node.style.filter = 'alpha(opacity=' + chaValue +')' 	
+		}else {
+			 node.style.opacity = chaValue / 100;
+		}
+	}
+}
+
+//测试 formatDate
+function testFormatDate(){
+	var date = new Date();
+
+	var newFormat = formatDate(date, "yyyy-MM-dd"); 
+	var newFormat2 = formatDate(date, "yyyy年M月d日");
+	var newFormat3 = formatDate(date, "yyyy:MM:dd HH:mm:ss");
+	var newFormat4 = formatDate("here","yyyy-MM-dd");
+
+	console.log('时间: ' + date);
+	console.log('yyyy-MM-dd: ' + newFormat);
+	console.log('yyyy年M月d日: ' + newFormat2);
+	console.log('yyyy:MM:dd HH:mm:ss: ' + newFormat3);
+	console.log('无效对象: ' + newFormat4);
+}
+
+//测试 UniqStrArray(strArr)
+function testUniqStrArray(){
+	var arr_old = ['test','1','34','asdf','test','a','asdf','asdfs']; 
+
+	var arr_new = uniqStrArray(arr_old); 
+
+	console.log('原数组: ');
+	console.log(arr_old);
+	console.log('去重后：');	
+	console.log(arr_new);  
+} 
+
+//测试 Clone(src)
+function testClone(select){
+	var srcObj = {
+		a: null,
+		c: 1,
+		d: '11',
+		e: true,
+		f: ['node',1,null,'test'],
+		g: {
+			ga: null,
+			gc: 1,
+			gd: '11',
+			gf: ['node',1,null,'test'],
+		},
+		h: function(){console.log(d);},
+		i: 'null'
+	}
+	
+	var destObj = clone(srcObj);
+	//var destObj = clone_old(srcObj);
+
+	if(select == 1){
+		console.log('原对象：');
+		console.log(srcObj);
+	}else if (select == 2){
+		srcObj.g = {ganew:'new',gcnew:11};
+		console.log('原对象更改后：');
+		console.log(srcObj);
+	}
+
+	console.log('克隆对象：');
+	console.log(destObj);
+
+
+}
+
+//测试 each(arr, fn)
+function testEach(){
+	var arr = ['abc', 
+				function(){console.log('hi.');},
+				1,
+				{a:1,b:'bb',f:function(){console.log(a);}},
+				['abc',23,null]
+			  ];
+	console.log('数组：');
+	console.log(arr);
+	console.log('遍历结果：');
+
+	each(arr,function(i,data){
+		if(i != 2)
+			console.log(i + ' : ' + data);
+	});
+}
+
+//测试 isParent(parent, node)
+function testIsParent(parentId, childId){
+	var parentNode = document.getElementById(parentId);
+	var childNode = document.getElementById(childId);
+
+	var value = isParent(parentNode, childNode);
+
+	if(value == true){
+		document.getElementById('isParentResult').innerHTML = parentId + '是' + childId + ' 的祖辈！';
+	}else{
+		document.getElementById('isParentResult').innerHTML = parentId + '不是' + childId + ' 的祖辈！';
+	}
+}
+
+//测试 GetElementsByAttribute()
+function testGetElementsByAttribute(){
+	var select = arguments[0];
+	var node, attName, attValue;
+
+	console.log('a[0]:'+arguments[0]);
+	console.log('a[1]:'+arguments[1]);
+	console.log('a[2]:'+arguments[2]);
+	console.log('a[3]:'+arguments[3]);
+
+	if(select == 1){
+		node = document.getElementById(arguments[1]);
+		attName = arguments[2];
+		attValue = arguments[3];
+
+		var results = getElementsByAttribute(node, attName, attValue);
+	}else if (select == 2){
+		node = document.getElementById(arguments[1]);
+		attName = arguments[2];
+
+		var results = getElementsByAttribute(node, attName);
+	}else if (select == 3){
+		attName = arguments[1];
+		attValue = arguments[2];
+
+		var results = getElementsByAttribute(attName, attValue);
+	}else if (select == 4){
+		attName = arguments[1];
+
+		var results = getElementsByAttribute(attName);
+	}	
+	
+	console.log(results);
+}
+
+//测试 addClass(node, string) 和 removeClass(node, string)
+function testClass(nodeId,select,className){
+	var node = document.getElementById(nodeId);
+
+	if(select === 1){
+		addClass(node, className);			//添加样式
+	}else if(select === 2){
+		removeClass(node, className);		//删除样式
+	}else {
+		return 0;
+	}
+}
+
+//测试 eventDelegate
+function testEventDelegate(){
+	var parentNode = document.getElementById('parent-delegate'), 
+		tagName = 'li', 
+		eventName = 'click';
+	
+	document.getElementById('delegateResult').innerHTML = '(请任意点击child)';
+
+	//执行代理
+	eventDelegate(parentNode, tagName, eventName, function(){
+		this.innerHTML += ' has changed';
+	});
+}
+
+
+//测试 fadeIn(node), fadeOut(node)
+function testFadeInOut(nodeId,select){
+	var node = document.getElementById(nodeId);
+
+	if(select === 1){
+		fadeIn(node);			//淡入
+	}else if(select === 2){	
+		fadeOut(node);			//淡出
+	}
 }
