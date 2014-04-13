@@ -67,7 +67,6 @@ function uniqStrArray(strArr) {
 
     return newArr;
 }
-//不足：该函数只针对字符串数组进行了去重，没有判断元素的类型。不同类型的同值元素会被当成相同的值进行处理，如[1,'1'],['null',null]
 
 /**
  * clone
@@ -183,25 +182,6 @@ function each(arr, fn) {
 		fn(i, arr[i]);
 	}
 }
-/*
-以下是根据网上例子进行了稍微更改的例子，但对一些条件的判断仍不太理解，try catch的是什么呢？感觉做的处理是一样的，为什么要重复写呢？
-function each_t(arr,fn) {
-    for (var i in arr) {
-       if (arr.hasOwnProperty(i)) {  
-            if(typeof(arr[i]) == "object") {
-                fn(i, arr[i]);
-            } else {
-                try {
-                    if(!arr[0].nodeName) fn(i, arr[i]);		//这里主要是对什么进行了判断呢？
-                }
-                catch (e) {
-                    fn(i, arr[i]);
-                }              
-            }
-        }
-    }
-}
-*/
 
 /**
  * isParent
@@ -359,7 +339,7 @@ function eventDelegate(parentNode, tagName, eventName, handle) {
 				handle.apply(target, arguments);
 			}
 		},false);
-	}else if (parentNode.attachEvent) {						//	IE
+	}else if (parentNode.attachEvent) {						//IE
 		parentNode.attachEvent('on'+eventName, function(){
 			e = e || window.event;
 			var target = e.srcElement? e.srcElement : e.target;
@@ -368,7 +348,7 @@ function eventDelegate(parentNode, tagName, eventName, handle) {
 				handle.apply(target, arguments);
 			}
 		});	
-	}else {													//其他情况
+	}else {										//其他情况
 		parent["on" + eventName] = function(){
 			e = e || window.event;
 			var target = e.srcElement? e.srcElement : e.target;
